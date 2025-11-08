@@ -19,7 +19,7 @@ class CharacterAdapter(
         fun bind(character: Character) {
             val name = character.name ?: "Unnamed"
             val lvl = character.level ?: 1
-            val clazz = character.race ?: "Adventurer"
+            val clazz = character.CharClass ?: "Adventurer"
 
             binding.tvCharacterName.text = name
             binding.tvCharacterDetails.text = "Level $lvl $clazz"

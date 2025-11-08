@@ -2,7 +2,6 @@ package com.spellweave.ui.characters
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.gson.Gson
 import com.spellweave.R
 import com.spellweave.data.Character
 import com.spellweave.databinding.FragmentCharactercreatorBinding
@@ -75,7 +73,7 @@ class CharactercreatorFragment : Fragment() {
                 if (!binding.etWisdom.hasFocus()) binding.etWisdom.setText(character.wisdom.toString())
                 if (!binding.etCharisma.hasFocus()) binding.etCharisma.setText(character.charisma.toString())
 
-                setSpinnerSelection(character.race)
+                setSpinnerSelection(character.CharClass)
             }
         }
 
@@ -104,7 +102,7 @@ class CharactercreatorFragment : Fragment() {
 
     private fun setSpinnerSelection(characterClass: String?) {
         if (characterClass.isNullOrBlank()) return
-        val classes = resources.getStringArray(R.array.dnd_races)
+        val classes = resources.getStringArray(R.array.dnd_classes)
         val position = classes.indexOf(characterClass)
         if (position >= 0) binding.spinnerClass.setSelection(position)
     }
@@ -112,7 +110,7 @@ class CharactercreatorFragment : Fragment() {
     private fun setupClassSpinner() {
         val adapter = ArrayAdapter.createFromResource(
             requireContext(),
-            R.array.dnd_races,
+            R.array.dnd_classes,
             android.R.layout.simple_spinner_item
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -145,11 +143,11 @@ class CharactercreatorFragment : Fragment() {
         character.wisdom = binding.etWisdom.text?.toString()?.toIntOrNull() ?: character.wisdom
         character.charisma = binding.etCharisma.text?.toString()?.toIntOrNull() ?: character.charisma
 
-        if (character.race == className) {
+        if (character.CharClass == className) {
             viewModel.characterData.value = character
             return
         }
-        character.race = className
+        character.CharClass = className
 
         //switch case that with default class values. Modify this so it fits characters better
         when (className) {
@@ -182,7 +180,7 @@ class CharactercreatorFragment : Fragment() {
 
         //Name and Class are read-only in update mode.
         characterToSave.name = binding.etName.text.toString()
-        characterToSave.race = binding.spinnerClass.selectedItem.toString()
+        characterToSave.CharClass = binding.spinnerClass.selectedItem.toString()
         characterToSave.level = binding.etLevel.text.toString().toIntOrNull() ?: 1
         characterToSave.hp = binding.etHp.text.toString().toIntOrNull() ?: 10
         characterToSave.speed = binding.etSpeed.text.toString().toIntOrNull() ?: 30
@@ -194,17 +192,17 @@ class CharactercreatorFragment : Fragment() {
         characterToSave.charisma = binding.etCharisma.text.toString().toIntOrNull() ?: 10
 
         val enteredName = characterToSave.name?.trim().orEmpty()
-        val enteredRace = characterToSave.race?.trim().orEmpty()
+        val enteredClass = characterToSave.CharClass?.trim().orEmpty()
 
         if (enteredName.isBlank()) {
             Toast.makeText(requireContext(), "Please enter a name", Toast.LENGTH_SHORT).show()
             return
         }
 
-        //Block duplicate characters (same name and race)
+        //Block duplicate characters (same name and class)
         if (!isUpdateMode) {
             val existing = JsonHelper.readCharacters(requireContext()).any { c ->
-                (c.name?.trim() == enteredName) && (c.race?.trim() == enteredRace)
+                (c.name?.trim()?.lowercase() == enteredName.lowercase()) && (c.CharClass?.trim() == enteredClass)
             }
             if (existing) {
                 Toast.makeText(requireContext(), "character already exists", Toast.LENGTH_SHORT).show()

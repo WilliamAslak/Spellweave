@@ -16,7 +16,7 @@
     <string name="charactercreator" />
     <string name="todo">TODO</string>
     <string name="character_name">Character Name</string>
-    <string name="race">Race</string>
+    <string name="charclass">Class</string>
     <string name="level">Level</string>
     <string name="hp">HP</string>
     <string name="speed">Speed</string>
@@ -30,7 +30,7 @@
     <string name="save_character">Save Character</string>
     <string name="delete_character">Delete Character</string>
 
-    <string-array name="dnd_races">
+    <string-array name="dnd_classes">
         <item>Warrior</item>
         <item>Mage</item>
         <item>Thief</item>
