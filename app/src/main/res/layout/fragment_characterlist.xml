@@ -32,4 +32,30 @@
         app:layout_constraintTop_toBottomOf="@id/text_characterlist"
         tools:listitem="@layout/list_item_character" />
 
+    <LinearLayout
+        android:id="@+id/empty_state"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/text_characterlist"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_characters_created"
+            android:textSize="16sp"
+            android:paddingBottom="12dp" />
+
+        <Button
+            android:id="@+id/btn_empty_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_character" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

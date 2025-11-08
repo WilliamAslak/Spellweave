@@ -35,8 +35,21 @@ class CharacterlistFragment : Fragment() {
 
         setupRecyclerView()
 
+        //Toggle empty list state
         viewModel.characterList.observe(viewLifecycleOwner) { characters ->
             characterAdapter.updateData(characters)
+
+            val isEmpty = characters.isNullOrEmpty()
+            binding.rvCharacterList.visibility = if (isEmpty) View.GONE else View.VISIBLE
+            binding.emptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        }
+
+        binding.btnEmptyCreate.setOnClickListener {
+            val args = Bundle().apply { putString("characterId", null) }
+            findNavController().navigate(
+                R.id.action_nav_characterlist_to_nav_charactercreator,
+                args
+            )
         }
 
         return root

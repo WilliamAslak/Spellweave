@@ -29,6 +29,8 @@
     <string name="charisma">Charisma</string>
     <string name="save_character">Save Character</string>
     <string name="delete_character">Delete Character</string>
+    <string name="no_characters_created">No Characters created</string>
+    <string name="create_character">Create character</string>
 
     <string-array name="dnd_classes">
         <item>Warrior</item>
