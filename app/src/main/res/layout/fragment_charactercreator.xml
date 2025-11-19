@@ -94,7 +94,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ability_scores"
+            android:text="@string/character_stats"
             android:textSize="16sp"
             style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_marginTop="16dp"
@@ -171,6 +171,39 @@
                 android:layout_height="wrap_content"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_spell_slots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/spell_slots"
+            android:textSize="16sp"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 4-column grid: first cell is the + button, the rest are spell slots -->
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/container_spell_slots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:columnCount="4"
+            app:alignmentMode="alignMargins"
+            app:useDefaultMargins="true">
+
+            <!-- + button counts as one of the 4 boxes -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_spell_slot"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:text="@string/plus"
+                android:textSize="20sp"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="2dp"
+                android:contentDescription="@string/add_spell_slot" />
+
+        </androidx.gridlayout.widget.GridLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

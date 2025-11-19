@@ -15,7 +15,10 @@ import com.spellweave.R
 import com.spellweave.data.Character
 import com.spellweave.databinding.FragmentCharactercreatorBinding
 import com.spellweave.util.JsonHelper
-
+import android.widget.ImageButton
+import android.widget.Spinner
+import com.spellweave.data.SpellSlot
+import androidx.gridlayout.widget.GridLayout
 class CharactercreatorFragment : Fragment() {
 
     private var _binding: FragmentCharactercreatorBinding? = null
@@ -34,6 +37,19 @@ class CharactercreatorFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(this).get(CharactercreatorModel::class.java)
         _binding = FragmentCharactercreatorBinding.inflate(inflater, container, false)
+
+        binding.containerSpellSlots.post {
+            val slotWidthDp = 74
+            val marginDp = 4
+            val density = resources.displayMetrics.density
+
+            val slotTotalPx = ((slotWidthDp + marginDp * 2) * density).toInt()
+            val gridWidthPx = binding.containerSpellSlots.width
+
+            val cols = (gridWidthPx / slotTotalPx).coerceAtLeast(1)
+            binding.containerSpellSlots.columnCount = cols
+        }
+
         val root: View = binding.root
 
         characterIdArg = arguments?.getString("characterId")
@@ -58,6 +74,7 @@ class CharactercreatorFragment : Fragment() {
         }
 
         setupClassSpinner()
+        setupSpellSlotSection()
 
         viewModel.characterData.observe(viewLifecycleOwner) { character ->
             if (character != null) {
@@ -74,6 +91,9 @@ class CharactercreatorFragment : Fragment() {
                 if (!binding.etCharisma.hasFocus()) binding.etCharisma.setText(character.charisma.toString())
 
                 setSpinnerSelection(character.CharClass)
+
+                renderSpellSlots(character.spellSlots)
+
             }
         }
 
@@ -126,8 +146,87 @@ class CharactercreatorFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
+    private fun setupSpellSlotSection() {
+        binding.btnAddSpellSlot.setOnClickListener {
+            val character = viewModel.characterData.value ?: Character()
 
-    private fun updateStatsForClass(className: String) {
+            if (character.spellSlots.size >= 20) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.max_spell_slots_reached),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            character.spellSlots.add(SpellSlot(level = 1))
+            viewModel.characterData.value = character
+        }
+    }
+    private fun renderSpellSlots(spellSlots: List<SpellSlot>) {
+        val grid = binding.containerSpellSlots
+
+        while (grid.childCount > 1) {
+            grid.removeViewAt(grid.childCount - 1)
+        }
+
+        // Levels 0 to 9
+        val levels = (0..9).toList()
+
+        spellSlots.forEachIndexed { index, slot ->
+            val slotView = layoutInflater.inflate(
+                R.layout.item_spell_slot,
+                grid,
+                false
+            )
+
+            val spinner = slotView.findViewById<Spinner>(R.id.spinner_slot_level)
+            val btnRemove = slotView.findViewById<ImageButton>(R.id.btn_remove_slot)
+
+            val adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                levels
+            )
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+
+            val selectedPos = levels.indexOf(slot.level).let { if (it >= 0) it else 0 }
+            spinner.setSelection(selectedPos)
+
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val newLevel = levels[position]
+                    val currentCharacter = viewModel.characterData.value ?: return
+
+                    if (index >= currentCharacter.spellSlots.size) return
+                    val currentSlot = currentCharacter.spellSlots[index]
+
+                    if (currentSlot.level != newLevel) {
+                        currentSlot.level = newLevel
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {}
+            }
+
+            btnRemove.setOnClickListener {
+                val currentCharacter = viewModel.characterData.value ?: return@setOnClickListener
+                if (index < currentCharacter.spellSlots.size) {
+                    currentCharacter.spellSlots.removeAt(index)
+                    viewModel.characterData.value = currentCharacter
+                }
+            }
+
+            grid.addView(slotView)
+        }
+
+    }    private fun updateStatsForClass(className: String) {
         //Start from current character or a new one (the ? ensures null safety)
         val character = viewModel.characterData.value ?: Character()
 
@@ -193,6 +292,11 @@ class CharactercreatorFragment : Fragment() {
 
         val enteredName = characterToSave.name?.trim().orEmpty()
         val enteredClass = characterToSave.CharClass?.trim().orEmpty()
+
+        characterToSave.spellSlots = characterToSave.spellSlots
+            //Sorts from highest level spellslot to lowest.
+            .sortedByDescending { it.level }
+            .toMutableList()
 
         if (enteredName.isBlank()) {
             Toast.makeText(requireContext(), "Please enter a name", Toast.LENGTH_SHORT).show()

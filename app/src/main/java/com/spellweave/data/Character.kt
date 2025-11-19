@@ -15,5 +15,6 @@ data class Character(
     var constitution: Int? = 10,
     var intelligence: Int? = 10,
     var wisdom: Int? = 10,
-    var charisma: Int? = 10
+    var charisma: Int? = 10,
+    var spellSlots: MutableList<SpellSlot> = mutableListOf()
 )

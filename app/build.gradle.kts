@@ -58,6 +58,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("androidx.gridlayout:gridlayout:1.1.0")
 
     // ---- Unit tests (JVM / Robolectric) ----
     testImplementation("junit:junit:4.13.2")

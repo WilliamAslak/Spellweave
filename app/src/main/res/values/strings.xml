@@ -20,7 +20,7 @@
     <string name="level">Level</string>
     <string name="hp">HP</string>
     <string name="speed">Speed</string>
-    <string name="ability_scores">Ability Scores</string>
+    <string name="character_stats">Character Stats</string>
     <string name="strength">Strength</string>
     <string name="dexterity">Dexterity</string>
     <string name="constitution">Constitution</string>
@@ -31,6 +31,12 @@
     <string name="delete_character">Delete Character</string>
     <string name="no_characters_created">No Characters created</string>
     <string name="create_character">Create character</string>
+    <string name="spell_slots">Spell Slots</string>
+    <string name="add_spell_slot">Add spell slot</string>
+    <string name="remove_spell_slot">Remove spell slot</string>
+    <string name="max_spell_slots_reached">Maximum 20 spell slots.</string>
+    <string name="plus">+</string>
+
 
     <string-array name="dnd_classes">
         <item>Warrior</item>
