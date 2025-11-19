@@ -9,6 +9,7 @@ data class Character(
     var CharClass: String? = "Warrior",
     var level: Int? = 1,
     var hp: Int? = 10,
+    var currentHp: Int? = null,
     var speed: Int? = 30,
     var strength: Int? = 10,
     var dexterity: Int? = 10,

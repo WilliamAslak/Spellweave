@@ -360,7 +360,8 @@ class CharactercreatorFragment : Fragment() {
                 val deleted = JsonHelper.deleteCharacter(requireContext(), id)
                 if (deleted) {
                     Toast.makeText(requireContext(), "Character deleted", Toast.LENGTH_SHORT).show()
-                    findNavController().popBackStack()
+                    findNavController().popBackStack(R.id.nav_home, false)
+                    findNavController().navigate(R.id.nav_characterlist)
                 } else {
                     Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show()
                 }

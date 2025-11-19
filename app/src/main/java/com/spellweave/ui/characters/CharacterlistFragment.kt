@@ -64,7 +64,7 @@ class CharacterlistFragment : Fragment() {
         characterAdapter = CharacterAdapter(emptyList()) { character ->
             //pass the id of the character to the creator
             val bundle = bundleOf("characterId" to character.id)
-            findNavController().navigate(R.id.action_nav_characterlist_to_nav_charactercreator, bundle)
+            findNavController().navigate(R.id.action_nav_characterlist_to_nav_gameplay, bundle)
 
         }
         binding.rvCharacterList.adapter = characterAdapter

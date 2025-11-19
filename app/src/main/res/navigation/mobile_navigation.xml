@@ -47,5 +47,24 @@
         <action
             android:id="@+id/action_nav_characterlist_to_nav_charactercreator"
             app:destination="@id/nav_charactercreator" />
+
+        <action
+            android:id="@+id/action_nav_characterlist_to_nav_gameplay"
+            app:destination="@id/nav_gameplay" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_gameplay"
+        android:name="com.spellweave.ui.gameplay.GameplayFragment"
+        android:label="Gameplay"
+        tools:layout="@layout/fragment_gameplay">
+
+        <argument
+            android:name="characterId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_nav_gameplay_to_nav_charactercreator"
+            app:destination="@id/nav_charactercreator" />
     </fragment>
 </navigation>
