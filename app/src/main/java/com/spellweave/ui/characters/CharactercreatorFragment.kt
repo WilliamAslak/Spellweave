@@ -18,7 +18,6 @@ import com.spellweave.util.JsonHelper
 import android.widget.ImageButton
 import android.widget.Spinner
 import com.spellweave.data.SpellSlot
-import androidx.gridlayout.widget.GridLayout
 class CharactercreatorFragment : Fragment() {
 
     private var _binding: FragmentCharactercreatorBinding? = null
@@ -67,6 +66,14 @@ class CharactercreatorFragment : Fragment() {
             }
             binding.btnSaveCharacter.text = "Save Character"
             binding.btnDeleteCharacter.visibility = View.GONE
+
+            // Add default spellslots
+            val current = viewModel.characterData.value ?: Character()
+            if (current.spellSlots.isEmpty()) {
+                current.spellSlots.add(SpellSlot(level = 2))
+                current.spellSlots.add(SpellSlot(level = 1))
+                viewModel.characterData.value = current
+            }
         }
 
         binding.btnDeleteCharacter.setOnClickListener {
@@ -146,9 +153,29 @@ class CharactercreatorFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
+    private fun syncFormToCharacter(existing: Character?): Character {
+        val character = existing ?: Character()
+
+        // Copy current UI values into the character
+        character.name = binding.etName.text?.toString()
+        character.CharClass = binding.spinnerClass.selectedItem?.toString()
+
+        character.level = binding.etLevel.text?.toString()?.toIntOrNull() ?: character.level
+        character.hp = binding.etHp.text?.toString()?.toIntOrNull() ?: character.hp
+        character.speed = binding.etSpeed.text?.toString()?.toIntOrNull() ?: character.speed
+
+        character.strength = binding.etStrength.text?.toString()?.toIntOrNull() ?: character.strength
+        character.dexterity = binding.etDexterity.text?.toString()?.toIntOrNull() ?: character.dexterity
+        character.constitution = binding.etConstitution.text?.toString()?.toIntOrNull() ?: character.constitution
+        character.intelligence = binding.etIntelligence.text?.toString()?.toIntOrNull() ?: character.intelligence
+        character.wisdom = binding.etWisdom.text?.toString()?.toIntOrNull() ?: character.wisdom
+        character.charisma = binding.etCharisma.text?.toString()?.toIntOrNull() ?: character.charisma
+
+        return character
+    }
     private fun setupSpellSlotSection() {
         binding.btnAddSpellSlot.setOnClickListener {
-            val character = viewModel.characterData.value ?: Character()
+            val character = syncFormToCharacter(viewModel.characterData.value)
 
             if (character.spellSlots.size >= 20) {
                 Toast.makeText(
