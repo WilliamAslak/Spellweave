@@ -6,7 +6,7 @@ data class Character(
     //Unique id for editing/updating
     val id: String = UUID.randomUUID().toString(),
     var name: String? = "",
-    var CharClass: String? = "Warrior",
+    var charClass: String? = "Wizard",
     var level: Int? = 1,
     var hp: Int? = 10,
     var speed: Int? = 30,

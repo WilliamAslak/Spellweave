@@ -73,7 +73,7 @@ class CharactercreatorFragment : Fragment() {
                 if (!binding.etWisdom.hasFocus()) binding.etWisdom.setText(character.wisdom.toString())
                 if (!binding.etCharisma.hasFocus()) binding.etCharisma.setText(character.charisma.toString())
 
-                setSpinnerSelection(character.CharClass)
+                setSpinnerSelection(character.charClass)
             }
         }
 
@@ -143,27 +143,51 @@ class CharactercreatorFragment : Fragment() {
         character.wisdom = binding.etWisdom.text?.toString()?.toIntOrNull() ?: character.wisdom
         character.charisma = binding.etCharisma.text?.toString()?.toIntOrNull() ?: character.charisma
 
-        if (character.CharClass == className) {
+        if (character.charClass == className) {
             viewModel.characterData.value = character
             return
         }
-        character.CharClass = className
+        character.charClass = className
 
         //switch case that with default class values. Modify this so it fits characters better
         when (className) {
-            "Mage" -> {
+            "Bard" -> {
                 character.strength = 8;  character.dexterity = 10; character.constitution = 10
                 character.intelligence = 15; character.wisdom = 14; character.charisma = 12
             }
-            "Thief" -> {
+            "Cleric" -> {
                 character.strength = 10; character.dexterity = 15; character.constitution = 10
                 character.intelligence = 12; character.wisdom = 8;  character.charisma = 14
             }
-            "Warrior" -> {
+            "Druid" -> {
                 character.strength = 15; character.dexterity = 14; character.constitution = 12
                 character.intelligence = 8;  character.wisdom = 10; character.charisma = 10
             }
-            "Bullywug" -> {
+            "Fighter" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Paladin" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Ranger" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Rogue" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Sorcerer" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Warlock" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Wizard" -> {
                 character.strength = 12; character.dexterity = 12; character.constitution = 12
                 character.intelligence = 10; character.wisdom = 10; character.charisma = 8
             }
@@ -180,7 +204,7 @@ class CharactercreatorFragment : Fragment() {
 
         //Name and Class are read-only in update mode.
         characterToSave.name = binding.etName.text.toString()
-        characterToSave.CharClass = binding.spinnerClass.selectedItem.toString()
+        characterToSave.charClass = binding.spinnerClass.selectedItem.toString()
         characterToSave.level = binding.etLevel.text.toString().toIntOrNull() ?: 1
         characterToSave.hp = binding.etHp.text.toString().toIntOrNull() ?: 10
         characterToSave.speed = binding.etSpeed.text.toString().toIntOrNull() ?: 30
@@ -192,7 +216,7 @@ class CharactercreatorFragment : Fragment() {
         characterToSave.charisma = binding.etCharisma.text.toString().toIntOrNull() ?: 10
 
         val enteredName = characterToSave.name?.trim().orEmpty()
-        val enteredClass = characterToSave.CharClass?.trim().orEmpty()
+        val enteredClass = characterToSave.charClass?.trim().orEmpty()
 
         if (enteredName.isBlank()) {
             Toast.makeText(requireContext(), "Please enter a name", Toast.LENGTH_SHORT).show()
@@ -202,7 +226,7 @@ class CharactercreatorFragment : Fragment() {
         //Block duplicate characters (same name and class)
         if (!isUpdateMode) {
             val existing = JsonHelper.readCharacters(requireContext()).any { c ->
-                (c.name?.trim()?.lowercase() == enteredName.lowercase()) && (c.CharClass?.trim() == enteredClass)
+                (c.name?.trim()?.lowercase() == enteredName.lowercase()) && (c.charClass?.trim() == enteredClass)
             }
             if (existing) {
                 Toast.makeText(requireContext(), "character already exists", Toast.LENGTH_SHORT).show()
