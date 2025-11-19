@@ -197,8 +197,8 @@ class CharactercreatorFragment : Fragment() {
             grid.removeViewAt(grid.childCount - 1)
         }
 
-        // Levels 0 to 9
-        val levels = (0..9).toList()
+        // Levels 1 to 9
+        val levels = (1..9).toList()
 
         spellSlots.forEachIndexed { index, slot ->
             val slotView = layoutInflater.inflate(
