@@ -19,7 +19,7 @@ class CharacterAdapter(
         fun bind(character: Character) {
             val name = character.name ?: "Unnamed"
             val lvl = character.level ?: 1
-            val clazz = character.CharClass ?: "Warrior"
+            val clazz = character.charClass ?: "Wizard"
 
             binding.tvCharacterName.text = name
             binding.tvCharacterDetails.text = "Level $lvl $clazz"
@@ -30,10 +30,16 @@ class CharacterAdapter(
         }
         //Apply images for each class
         private fun classIconFor(clazz: String): Int = when (clazz) {
-            "Warrior" -> R.drawable.ic_class_warrior
-            "Mage" -> R.drawable.ic_class_mage
-            "Thief" -> R.drawable.ic_class_thief
-            "Bullywug" -> R.drawable.ic_class_bullywug
+            "Bard" -> R.drawable.ic_class_thief
+            "Cleric" -> R.drawable.ic_class_mage
+            "Druid" -> R.drawable.ic_class_mage
+            "Fighter" -> R.drawable.ic_class_warrior
+            "Paladin" -> R.drawable.ic_class_warrior
+            "Ranger" -> R.drawable.ic_class_warrior
+            "Rogue" -> R.drawable.ic_class_thief
+            "Sorcerer" -> R.drawable.ic_class_mage
+            "Warlock" -> R.drawable.ic_class_mage
+            "Wizard" -> R.drawable.ic_class_mage
             else -> R.drawable.ic_class_default
         }
     }

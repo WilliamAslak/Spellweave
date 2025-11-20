@@ -253,7 +253,7 @@ class CharactercreatorFragment : Fragment() {
             grid.addView(slotView)
         }
 
-    }    private fun updateStatsForClass(className: String) {
+    private fun updateStatsForClass(className: String) {
         //Start from current character or a new one (the ? ensures null safety)
         val character = viewModel.characterData.value ?: Character()
 
@@ -277,19 +277,43 @@ class CharactercreatorFragment : Fragment() {
 
         //switch case that with default class values. Modify this so it fits characters better
         when (className) {
-            "Mage" -> {
+            "Bard" -> {
                 character.strength = 8;  character.dexterity = 10; character.constitution = 10
                 character.intelligence = 15; character.wisdom = 14; character.charisma = 12
             }
-            "Thief" -> {
+            "Cleric" -> {
                 character.strength = 10; character.dexterity = 15; character.constitution = 10
                 character.intelligence = 12; character.wisdom = 8;  character.charisma = 14
             }
-            "Warrior" -> {
+            "Druid" -> {
                 character.strength = 15; character.dexterity = 14; character.constitution = 12
                 character.intelligence = 8;  character.wisdom = 10; character.charisma = 10
             }
-            "Bullywug" -> {
+            "Fighter" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Paladin" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Ranger" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Rogue" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Sorcerer" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Warlock" -> {
+                character.strength = 12; character.dexterity = 12; character.constitution = 12
+                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+            }
+            "Wizard" -> {
                 character.strength = 12; character.dexterity = 12; character.constitution = 12
                 character.intelligence = 10; character.wisdom = 10; character.charisma = 8
             }
