@@ -97,7 +97,7 @@ class CharactercreatorFragment : Fragment() {
                 if (!binding.etWisdom.hasFocus()) binding.etWisdom.setText(character.wisdom.toString())
                 if (!binding.etCharisma.hasFocus()) binding.etCharisma.setText(character.charisma.toString())
 
-                setSpinnerSelection(character.CharClass)
+                setSpinnerSelection(character.charClass)
 
                 renderSpellSlots(character.spellSlots)
 
@@ -158,7 +158,7 @@ class CharactercreatorFragment : Fragment() {
 
         // Copy current UI values into the character
         character.name = binding.etName.text?.toString()
-        character.CharClass = binding.spinnerClass.selectedItem?.toString()
+        character.charClass = binding.spinnerClass.selectedItem?.toString()
 
         character.level = binding.etLevel.text?.toString()?.toIntOrNull() ?: character.level
         character.hp = binding.etHp.text?.toString()?.toIntOrNull() ?: character.hp
@@ -252,6 +252,7 @@ class CharactercreatorFragment : Fragment() {
 
             grid.addView(slotView)
         }
+    }
 
     private fun updateStatsForClass(className: String) {
         //Start from current character or a new one (the ? ensures null safety)
@@ -269,11 +270,11 @@ class CharactercreatorFragment : Fragment() {
         character.wisdom = binding.etWisdom.text?.toString()?.toIntOrNull() ?: character.wisdom
         character.charisma = binding.etCharisma.text?.toString()?.toIntOrNull() ?: character.charisma
 
-        if (character.CharClass == className) {
+        if (character.charClass == className) {
             viewModel.characterData.value = character
             return
         }
-        character.CharClass = className
+        character.charClass = className
 
         //switch case that with default class values. Modify this so it fits characters better
         when (className) {
@@ -330,7 +331,7 @@ class CharactercreatorFragment : Fragment() {
 
         //Name and Class are read-only in update mode.
         characterToSave.name = binding.etName.text.toString()
-        characterToSave.CharClass = binding.spinnerClass.selectedItem.toString()
+        characterToSave.charClass = binding.spinnerClass.selectedItem.toString()
         characterToSave.level = binding.etLevel.text.toString().toIntOrNull() ?: 1
         characterToSave.hp = binding.etHp.text.toString().toIntOrNull() ?: 10
         characterToSave.speed = binding.etSpeed.text.toString().toIntOrNull() ?: 30
@@ -342,7 +343,7 @@ class CharactercreatorFragment : Fragment() {
         characterToSave.charisma = binding.etCharisma.text.toString().toIntOrNull() ?: 10
 
         val enteredName = characterToSave.name?.trim().orEmpty()
-        val enteredClass = characterToSave.CharClass?.trim().orEmpty()
+        val enteredClass = characterToSave.charClass?.trim().orEmpty()
 
         characterToSave.spellSlots = characterToSave.spellSlots
             //Sorts from highest level spellslot to lowest.
@@ -357,7 +358,7 @@ class CharactercreatorFragment : Fragment() {
         //Block duplicate characters (same name and class)
         if (!isUpdateMode) {
             val existing = JsonHelper.readCharacters(requireContext()).any { c ->
-                (c.name?.trim()?.lowercase() == enteredName.lowercase()) && (c.CharClass?.trim() == enteredClass)
+                (c.name?.trim()?.lowercase() == enteredName.lowercase()) && (c.charClass?.trim() == enteredClass)
             }
             if (existing) {
                 Toast.makeText(requireContext(), "character already exists", Toast.LENGTH_SHORT).show()

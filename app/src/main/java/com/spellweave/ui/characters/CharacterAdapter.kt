@@ -1,5 +1,6 @@
 package com.spellweave.ui.characterlist
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,7 @@ class CharacterAdapter(
     inner class CharacterViewHolder(private val binding: ListItemCharacterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SetTextI18n")
         fun bind(character: Character) {
             val name = character.name ?: "Unnamed"
             val lvl = character.level ?: 1

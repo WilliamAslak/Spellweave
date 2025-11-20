@@ -77,7 +77,7 @@ class GameplayFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun updateUi(c: Character) {
         binding.tvName.text = c.name ?: "Unnamed"
-        binding.tvClassLevel.text = "${c.CharClass ?: "Class"} • Lv ${c.level}"
+        binding.tvClassLevel.text = "${c.charClass ?: "Class"} • Lv ${c.level}"
 
         val currentHp = c.currentHp ?: c.hp
         binding.tvHpValue.text = "$currentHp / ${c.hp}"
