@@ -72,6 +72,17 @@ dependencies {
     debugImplementation("androidx.fragment:fragment-testing:1.8.2")
 
     // ---- Instrumentation tests (optional, if you run Espresso in src/androidTest) ----
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:core-ktx:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+
+    androidTestImplementation("androidx.navigation:navigation-testing:2.6.0")
+
+    androidTestImplementation("org.mockito:mockito-android:5.12.0")
+
+// orchestrator support
+    androidTestUtil("androidx.test:orchestrator:1.5.0")
+
 }

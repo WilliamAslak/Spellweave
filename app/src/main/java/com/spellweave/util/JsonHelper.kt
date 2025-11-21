@@ -69,4 +69,26 @@ object JsonHelper {
         val characters = readCharacters(context)
         return characters.find { it.id == characterId }
     }
+
+
+    //For testing purposes
+    private var testOverride: JsonHelper? = null
+    fun overrideInstanceForTests(override: JsonHelper) {
+        testOverride = override
+    }
+    fun resetTestOverride() {
+        testOverride = null
+    }
+
+    fun testReadCharacters(context: Context) =
+        testOverride?.readCharacters(context) ?: readCharacters(context)
+
+    fun testGetCharacterById(context: Context, id: String) =
+        testOverride?.getCharacterById(context, id) ?: getCharacterById(context, id)
+
+    fun testSaveCharacter(context: Context, char: Character) =
+        testOverride?.saveCharacter(context, char) ?: saveCharacter(context, char)
+
+    fun testDeleteCharacter(context: Context, id: String) =
+        testOverride?.deleteCharacter(context, id) ?: deleteCharacter(context, id)
 }
