@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -400,5 +401,24 @@ class CharactercreatorFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun loadCharacterIfNeeded() {
+        val characterId = arguments?.getString("characterId") ?: return
+        val character = JsonProvider.instance.getCharacterById(requireContext(), characterId) ?: return
+
+        // Populate viewModel first
+        viewModel.characterData.value = character
+
+        // Only populate views if they exist
+        view?.let { v ->
+            v.findViewById<EditText>(R.id.et_name)?.setText(character.name)
+            v.findViewById<EditText>(R.id.et_level)?.setText(character.level.toString())
+            val spinnerClass = v.findViewById<Spinner>(R.id.spinner_class)
+            spinnerClass?.let { s ->
+                val position = (s.adapter as? ArrayAdapter<String>)?.getPosition(character.charClass) ?: 0
+                s.setSelection(position)
+            }
+        }
     }
 }
