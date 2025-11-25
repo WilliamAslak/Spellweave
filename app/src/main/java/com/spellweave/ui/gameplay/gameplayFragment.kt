@@ -17,6 +17,7 @@ import com.spellweave.data.SpellSlot
 import com.spellweave.databinding.FragmentGameplayBinding
 import com.spellweave.util.JsonHelper
 import androidx.core.os.bundleOf
+import com.spellweave.util.JsonProvider
 
 class GameplayFragment : Fragment() {
 
@@ -151,7 +152,7 @@ class GameplayFragment : Fragment() {
 
     private fun saveCharacterState() {
         val c = viewModel.characterData.value ?: return
-        JsonHelper.saveCharacter(requireContext(), c)
+        JsonProvider.instance.saveCharacter(requireContext(), c)
     }
 
     override fun onResume() {

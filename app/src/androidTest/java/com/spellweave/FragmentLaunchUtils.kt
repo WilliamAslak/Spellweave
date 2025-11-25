@@ -1,23 +1,17 @@
 package com.spellweave
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.test.core.app.ActivityScenario
+import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.fragment.app.testing.FragmentScenario
+import androidx.lifecycle.Lifecycle
 
-fun <T : Fragment> launchFragmentInTestActivity(
-    fragment: T,
-    args: Bundle? = null
-): ActivityScenario<TestFragmentActivity> {
-
-    val scenario = ActivityScenario.launch(TestFragmentActivity::class.java)
-
-    scenario.onActivity { activity ->
-        fragment.arguments = args
-        activity.supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commitNow()
-    }
-
-    return scenario
+inline fun <reified F : Fragment> launchFragmentInTestContainer(
+    fragmentArgs: android.os.Bundle? = null,
+    initialState: Lifecycle.State = Lifecycle.State.RESUMED
+): FragmentScenario<F> {
+    return launchFragmentInContainer<F>(
+        fragmentArgs = fragmentArgs,
+        themeResId = R.style.Theme_Spellweave,
+        initialState = initialState
+    )
 }

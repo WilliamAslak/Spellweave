@@ -18,6 +18,8 @@ import com.spellweave.util.JsonHelper
 import android.widget.ImageButton
 import android.widget.Spinner
 import com.spellweave.data.SpellSlot
+import com.spellweave.util.JsonProvider
+
 class CharactercreatorFragment : Fragment() {
 
     private var _binding: FragmentCharactercreatorBinding? = null
@@ -117,7 +119,7 @@ class CharactercreatorFragment : Fragment() {
     }
 
     private fun loadCharacterData(characterId: String) {
-        val character = JsonHelper.testGetCharacterById(requireContext(), characterId)
+        val character = JsonProvider.instance.getCharacterById(requireContext(), characterId)
         if (character != null) {
             viewModel.characterData.value = character
         } else {
@@ -357,7 +359,7 @@ class CharactercreatorFragment : Fragment() {
 
         //Block duplicate characters (same name and class)
         if (!isUpdateMode) {
-            val existing = JsonHelper.testReadCharacters(requireContext()).any { c ->
+            val existing = JsonProvider.instance.readCharacters(requireContext()).any { c ->
                 (c.name?.trim()?.lowercase() == enteredName.lowercase()) && (c.charClass?.trim() == enteredClass)
             }
             if (existing) {
@@ -366,7 +368,7 @@ class CharactercreatorFragment : Fragment() {
             }
         }
 
-        JsonHelper.testSaveCharacter(requireContext(), characterToSave)
+        JsonProvider.instance.saveCharacter(requireContext(), characterToSave)
 
         //Little popup saying we either updated/saved a character
         val message = if (isUpdateMode) "Character updated!" else "Character saved!"
@@ -382,7 +384,7 @@ class CharactercreatorFragment : Fragment() {
             .setTitle("Delete character")
             .setMessage("Are you sure you want to delete this character?")
             .setPositiveButton("Delete") { _, _ ->
-                val deleted = JsonHelper.testDeleteCharacter(requireContext(), id)
+                val deleted = JsonProvider.instance.deleteCharacter(requireContext(), id)
                 if (deleted) {
                     Toast.makeText(requireContext(), "Character deleted", Toast.LENGTH_SHORT).show()
                     findNavController().popBackStack(R.id.nav_home, false)

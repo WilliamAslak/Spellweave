@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.spellweave.data.Character
 import com.spellweave.util.JsonHelper
+import com.spellweave.util.JsonProvider
 
 class GameplayModel : ViewModel() {
 
@@ -17,7 +18,7 @@ class GameplayModel : ViewModel() {
 
     fun loadCharacter(context: Context) {
         val id = characterId ?: return
-        val loaded = JsonHelper.getCharacterById(context, id) ?: return
+        val loaded = JsonProvider.instance.getCharacterById(context, id) ?: return
 
         // Initialize currentHp if missing
         if (loaded.currentHp == null) {
