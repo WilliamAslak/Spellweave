@@ -42,6 +42,7 @@
     <string-array name="dnd_classes">
         <item>Bard</item>
         <item>Cleric</item>
+        <item>Druid</item>
         <item>Fighter</item>
         <item>Paladin</item>
         <item>Ranger</item>

@@ -32,13 +32,13 @@ class CharacterAdapter(
         }
         //Apply images for each class
         private fun classIconFor(clazz: String): Int = when (clazz) {
-            "Bard" -> R.drawable.ic_class_thief
-            "Cleric" -> R.drawable.ic_class_mage
-            "Druid" -> R.drawable.ic_class_mage
-            "Fighter" -> R.drawable.ic_class_warrior
-            "Paladin" -> R.drawable.ic_class_warrior
-            "Ranger" -> R.drawable.ic_class_warrior
-            "Rogue" -> R.drawable.ic_class_thief
+            "Bard" -> R.drawable.ic_class_bard
+            "Cleric" -> R.drawable.ic_class_cleric
+            "Druid" -> R.drawable.ic_class_druid
+            "Fighter" -> R.drawable.ic_class_fighter
+            "Paladin" -> R.drawable.ic_class_paladin
+            "Ranger" -> R.drawable.ic_class_ranger
+            "Rogue" -> R.drawable.ic_class_rogue
             "Sorcerer" -> R.drawable.ic_class_mage
             "Warlock" -> R.drawable.ic_class_mage
             "Wizard" -> R.drawable.ic_class_mage

@@ -16,7 +16,7 @@
         android:layout_height="40dp"
         android:layout_marginEnd="12dp"
         android:contentDescription="@string/select_character"
-        tools:src="@drawable/ic_class_warrior" />
+        tools:src="@drawable/ic_class_paladin" />
 
     <LinearLayout
         android:layout_width="0dp"
