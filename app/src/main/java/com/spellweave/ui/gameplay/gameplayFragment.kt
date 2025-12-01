@@ -17,7 +17,11 @@ import com.spellweave.data.SpellSlot
 import com.spellweave.databinding.FragmentGameplayBinding
 import com.spellweave.util.JsonHelper
 import androidx.core.os.bundleOf
-
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.spellweave.data.remote.ApiClient
+import com.spellweave.data.remote.SpellSummary
 class GameplayFragment : Fragment() {
 
     private var _binding: FragmentGameplayBinding? = null
@@ -132,17 +136,132 @@ class GameplayFragment : Fragment() {
             applySlotStyle(card, slot.used)
 
             card.setOnClickListener {
-                viewModel.toggleSpellSlotUsed(index)
-                // After toggling, re-read from ViewModel and save
-                viewModel.characterData.value?.let { updated ->
-                    applySlotStyle(card, updated.spellSlots[index].used)
-                    saveCharacterState()
+                val character = viewModel.characterData.value ?: return@setOnClickListener
+                val currentSlot = character.spellSlots.getOrNull(index) ?: return@setOnClickListener
+
+                if (currentSlot.used) {
+                    // If already used, simply un-use it
+                    viewModel.toggleSpellSlotUsed(index)
+                    viewModel.characterData.value?.let { updated ->
+                        applySlotStyle(card, updated.spellSlots[index].used)
+                        saveCharacterState()
+                    }
+                } else {
+                    // If unused, run the "cast spell" flow
+                    startCastSpellFlow(slotIndex = index, slot = currentSlot, character = character, card = card)
                 }
             }
 
             grid.addView(slotView)
         }
     }
+    private fun startCastSpellFlow(slotIndex: Int, slot: SpellSlot, character: Character, card: MaterialCardView) {
+        val maxLevel = slot.level
+        if (maxLevel <= 0) return
+
+        // Available levels to cast (slot level and down)
+        val levels = (1..maxLevel).toList().reversed()
+        val levelLabels = levels.map { "Cast as level $it" }.toTypedArray()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Choose spell level")
+            .setItems(levelLabels) { _, which ->
+                val chosenLevel = levels[which]
+                pickSpellForLevel(slotIndex, chosenLevel, character, card)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun pickSpellForLevel(slotIndex: Int, chosenLevel: Int, character: Character, card: MaterialCardView) {
+        val classIndex = character.charClass?.lowercase() ?: run {
+            Toast.makeText(requireContext(), "Character class missing", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // Get all spells for that class
+                val spellList = ApiClient.api.getClassSpells(classIndex)
+
+                // Only keep spells of the chosen level
+                val spellsForLevel = spellList.results.filter { it.level == chosenLevel }
+
+                if (spellsForLevel.isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "No level $chosenLevel spells for ${character.charClass}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@launch
+                }
+
+                val spellNames = spellsForLevel.map { it.name }.toTypedArray()
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Choose spell (level $chosenLevel)")
+                    .setItems(spellNames) { _, which ->
+                        val chosenSpell = spellsForLevel[which]
+                        showSpellDetailAndConsumeSlot(slotIndex, chosenSpell, card, chosenLevel)
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "Failed to load spells", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showSpellDetailAndConsumeSlot(slotIndex: Int, summary: SpellSummary, card: MaterialCardView, castAtLevel: Int) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val detail = ApiClient.api.getSpell(summary.index)
+
+                    val desc = detail.desc?.joinToString("\n\n") ?: "No description available."
+                    val higher = detail.higher_level?.joinToString("\n") ?: ""
+                    val infoBuilder = StringBuilder()
+
+                    infoBuilder.append(desc)
+
+                    if (higher.isNotBlank()) {
+                        infoBuilder.append("\n\nAt Higher Levels:\n")
+                        infoBuilder.append(higher)
+                    }
+
+                    infoBuilder.append("\n\nRange: ${detail.range ?: "—"}")
+                    infoBuilder.append("\nDuration: ${detail.duration ?: "—"}")
+                    infoBuilder.append("\nCasting time: ${detail.casting_time ?: "—"}")
+                    infoBuilder.append("\nConcentration: ${if (detail.concentration == true) "Yes" else "No"}")
+                    infoBuilder.append("\nRitual: ${if (detail.ritual == true) "Yes" else "No"}")
+
+                    AlertDialog.Builder(requireContext())
+                        .setTitle(detail.name)
+                        .setMessage(infoBuilder.toString())
+                        .setPositiveButton("Use slot") { _, _ ->
+                            viewModel.markSlotUsedWithSpell(
+                                index = slotIndex,
+                                spellIndex = summary.index,
+                                spellName = detail.name,
+                                castAtLevel = castAtLevel
+                            )
+
+                            viewModel.characterData.value?.let { updated ->
+                                applySlotStyle(card, updated.spellSlots[slotIndex].used)
+                                saveCharacterState()
+                            }
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Failed to load spell details", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
 
     private fun applySlotStyle(card: MaterialCardView, used: Boolean) {
         // Simple gray-out effect when used
