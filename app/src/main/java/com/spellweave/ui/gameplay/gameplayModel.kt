@@ -44,7 +44,12 @@ class GameplayModel : ViewModel() {
     fun longRest() {
         val c = _characterData.value ?: return
         c.currentHp = c.hp
-        c.spellSlots.forEach { it.used = false }
+        c.spellSlots.forEach {
+            it.used = false
+            it.usedSpellIndex = null
+            it.usedSpellName = null
+            it.castAtLevel = null
+        }
         _characterData.value = c
     }
 
@@ -52,7 +57,29 @@ class GameplayModel : ViewModel() {
         val c = _characterData.value ?: return
         if (index !in c.spellSlots.indices) return
         val slot = c.spellSlots[index]
-        slot.used = !slot.used
+
+        val newUsed = !slot.used
+        slot.used = newUsed
+
+        if (!newUsed) {
+            slot.usedSpellIndex = null
+            slot.usedSpellName = null
+            slot.castAtLevel = null
+        }
+
+        _characterData.value = c
+    }
+
+    fun markSlotUsedWithSpell(index: Int, spellIndex: String, spellName: String, castAtLevel: Int) {
+        val c = _characterData.value ?: return
+        if (index !in c.spellSlots.indices) return
+        val slot = c.spellSlots[index]
+
+        slot.used = true
+        slot.usedSpellIndex = spellIndex
+        slot.usedSpellName = spellName
+        slot.castAtLevel = castAtLevel
+
         _characterData.value = c
     }
 }

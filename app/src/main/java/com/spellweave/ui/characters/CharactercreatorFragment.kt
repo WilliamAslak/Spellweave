@@ -18,6 +18,9 @@ import com.spellweave.util.JsonHelper
 import android.widget.ImageButton
 import android.widget.Spinner
 import com.spellweave.data.SpellSlot
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 class CharactercreatorFragment : Fragment() {
 
     private var _binding: FragmentCharactercreatorBinding? = null
@@ -27,6 +30,8 @@ class CharactercreatorFragment : Fragment() {
 
     private var isUpdateMode = false
     private var characterIdArg: String? = null
+
+    private var apiCallFlag = false
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -66,14 +71,6 @@ class CharactercreatorFragment : Fragment() {
             }
             binding.btnSaveCharacter.text = "Save Character"
             binding.btnDeleteCharacter.visibility = View.GONE
-
-            // Add default spellslots
-            val current = viewModel.characterData.value ?: Character()
-            if (current.spellSlots.isEmpty()) {
-                current.spellSlots.add(SpellSlot(level = 2))
-                current.spellSlots.add(SpellSlot(level = 1))
-                viewModel.characterData.value = current
-            }
         }
 
         binding.btnDeleteCharacter.setOnClickListener {
@@ -83,10 +80,24 @@ class CharactercreatorFragment : Fragment() {
         setupClassSpinner()
         setupSpellSlotSection()
 
+        binding.etLevel.doAfterTextChanged {
+            reloadSpellSlots()
+        }
+
         viewModel.characterData.observe(viewLifecycleOwner) { character ->
             if (character != null) {
+                apiCallFlag = true
+
                 if (!binding.etName.hasFocus()) binding.etName.setText(character.name)
-                if (!binding.etLevel.hasFocus()) binding.etLevel.setText(character.level.toString())
+
+                if (!binding.etLevel.hasFocus()) {
+                    val current = binding.etLevel.text?.toString() ?: ""
+                    val new = character.level.toString()
+                    if (current != new) {
+                        binding.etLevel.setText(new)
+                    }
+                }
+
                 if (!binding.etHp.hasFocus()) binding.etHp.setText(character.hp.toString())
                 if (!binding.etSpeed.hasFocus()) binding.etSpeed.setText(character.speed.toString())
 
@@ -101,6 +112,7 @@ class CharactercreatorFragment : Fragment() {
 
                 renderSpellSlots(character.spellSlots)
 
+                apiCallFlag = false
             }
         }
 
@@ -144,12 +156,22 @@ class CharactercreatorFragment : Fragment() {
         binding.spinnerClass.adapter = adapter
 
         binding.spinnerClass.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedClass = parent.getItemAtPosition(position).toString()
+
                 if (!isUpdateMode) {
-                    val selectedClass = parent.getItemAtPosition(position).toString()
                     updateStatsForClass(selectedClass)
                 }
+
+                // Whenever class changes, try to reload spell slots for current level
+                reloadSpellSlots()
             }
+
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
@@ -394,6 +416,23 @@ class CharactercreatorFragment : Fragment() {
             .setNegativeButton("Cancel", null)
             .show()
     }
+
+    private fun reloadSpellSlots() {
+        val selectedClass = binding.spinnerClass.selectedItem?.toString() ?: return
+        val level = binding.etLevel.text.toString().toIntOrNull() ?: return
+        if (level <= 0) return
+
+        // Keep the Character object in sync with the typed level
+        val current = viewModel.characterData.value ?: Character()
+        current.level = level
+        viewModel.characterData.value = current
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            // This will overwrite spellSlots based on class+level (or clear for non-casters)
+            viewModel.loadSpellSlotsFor(selectedClass, level)
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -60,6 +60,10 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.gridlayout:gridlayout:1.1.0")
 
+    // For GET requests to the DnD API
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
     // ---- Unit tests (JVM / Robolectric) ----
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.13") // or latest stable
