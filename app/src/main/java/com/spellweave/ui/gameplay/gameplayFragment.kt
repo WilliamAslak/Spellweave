@@ -98,14 +98,28 @@ class GameplayFragment : Fragment() {
     }
 
     private fun setupHpButtons() {
-        binding.btnHpMinus.setOnClickListener {
-            viewModel.updateHp(-1)
+        binding.btnTakeDamage.setOnClickListener {
+            val amount = binding.etHpChange.text.toString().toIntOrNull()
+            if (amount == null) {
+                Toast.makeText(requireContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            viewModel.updateHp(-amount)
             saveCharacterState()
+            binding.etHpChange.text?.clear()
         }
 
-        binding.btnHpPlus.setOnClickListener {
-            viewModel.updateHp(1)
+        binding.btnHeal.setOnClickListener {
+            val amount = binding.etHpChange.text.toString().toIntOrNull()
+            if (amount == null) {
+                Toast.makeText(requireContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            viewModel.updateHp(amount)
             saveCharacterState()
+            binding.etHpChange.text?.clear()
         }
     }
 
