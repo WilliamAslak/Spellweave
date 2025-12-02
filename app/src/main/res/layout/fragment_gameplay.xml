@@ -1,154 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background_home">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- Character header -->
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="Name" />
-
-        <TextView
-            android:id="@+id/tv_class_level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Class • Lv 1" />
-
-        <!-- HP controls -->
-        <TextView
-            android:id="@+id/tv_hp_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="HP" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <Button
-                android:id="@+id/btn_hp_minus"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="-" />
-
-            <TextView
-                android:id="@+id/tv_hp_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
-                android:textSize="18sp"
-                android:text="10 / 10" />
-
-            <Button
-                android:id="@+id/btn_hp_plus"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="+" />
-        </LinearLayout>
-
-        <!-- Character stats -->
-        <TextView
-            android:id="@+id/tv_stats_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/character_stats"
-            android:textSize="16sp"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
+            <!-- Character header -->
             <TextView
-                android:id="@+id/tv_strength_value"
+                android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="STR: 10" />
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="Name" />
 
             <TextView
-                android:id="@+id/tv_dexterity_value"
+                android:id="@+id/tv_class_level"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DEX: 10" />
+                android:text="Class • Lv 1" />
+
+            <!-- HP controls -->
+            <TextView
+                android:id="@+id/tv_hp_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="HP" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/btn_hp_minus"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="-" />
+
+                <TextView
+                    android:id="@+id/tv_hp_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:textSize="18sp"
+                    android:text="10 / 10" />
+
+                <Button
+                    android:id="@+id/btn_hp_plus"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="+" />
+            </LinearLayout>
+
+            <!-- Character stats -->
+            <TextView
+                android:id="@+id/tv_stats_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/character_stats"
+                android:textSize="16sp"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_strength_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STR: 10" />
+
+                <TextView
+                    android:id="@+id/tv_dexterity_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DEX: 10" />
+
+                <TextView
+                    android:id="@+id/tv_constitution_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CON: 10" />
+
+                <TextView
+                    android:id="@+id/tv_intelligence_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="INT: 10" />
+
+                <TextView
+                    android:id="@+id/tv_wisdom_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WIS: 10" />
+
+                <TextView
+                    android:id="@+id/tv_charisma_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CHA: 10" />
+            </LinearLayout>
+
+            <!-- Update character button -->
+            <Button
+                android:id="@+id/btn_update_character"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/edit_character" />
+
+            <!-- Spell slots -->
+
+            <Button
+                android:id="@+id/btn_long_rest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Long Rest" />
 
             <TextView
-                android:id="@+id/tv_constitution_value"
+                android:id="@+id/tv_spell_slots_label"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CON: 10" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/spell_slots"
+                android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tv_intelligence_value"
-                android:layout_width="wrap_content"
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/grid_spell_slots_gameplay"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="INT: 10" />
+                app:columnCount="4"
+                app:alignmentMode="alignMargins"
+                app:useDefaultMargins="true" />
 
-            <TextView
-                android:id="@+id/tv_wisdom_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="WIS: 10" />
-
-            <TextView
-                android:id="@+id/tv_charisma_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CHA: 10" />
+            <!-- Long rest button -->
         </LinearLayout>
-
-        <!-- Update character button -->
-        <Button
-            android:id="@+id/btn_update_character"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/edit_character" />
-
-        <!-- Spell slots -->
-
-        <Button
-            android:id="@+id/btn_long_rest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Long Rest" />
-
-        <TextView
-            android:id="@+id/tv_spell_slots_label"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/spell_slots"
-            android:textSize="16sp" />
-
-        <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/grid_spell_slots_gameplay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:columnCount="4"
-            app:alignmentMode="alignMargins"
-            app:useDefaultMargins="true" />
-
-        <!-- Long rest button -->
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</FrameLayout>

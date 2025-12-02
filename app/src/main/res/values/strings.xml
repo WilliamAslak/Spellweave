@@ -37,6 +37,7 @@
     <string name="max_spell_slots_reached">Maximum 20 spell slots.</string>
     <string name="plus">+</string>
     <string name="edit_character">Edit character</string>
+    <string name="dice">Dice</string>
 
 
     <string-array name="dnd_classes">
