@@ -31,6 +31,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="bottom"
                         android:orientation="horizontal">
 
                         <!-- Character header -->
@@ -59,34 +60,35 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="24dp"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/tv_hp_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="HP" />
+                                android:text="HP: "
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tv_hp_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="10 / 10"
-                                android:textSize="18sp" />
+                                android:textSize="20sp" />
                         </LinearLayout>
-
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                        android:layout_width="120dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="Amount">
+                        android:hint="Heal/Damage Amount">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/et_hp_change"
-                            android:layout_width="match_parent"
+                            android:layout_width="251dp"
                             android:layout_height="wrap_content"
                             android:inputType="number"
                             android:textAlignment="center" />
@@ -100,18 +102,18 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_take_damage"
-                            android:layout_width="wrap_content"
+                            android:layout_width="120dp"
                             android:layout_height="wrap_content"
-                            android:text="Damage"
-                            android:backgroundTint="#C62828" />
+                            android:backgroundTint="#C62828"
+                            android:text="@string/damage" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_heal"
-                            android:layout_width="wrap_content"
+                            android:layout_width="120dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="10dp"
                             android:backgroundTint="#2E7D32"
-                            android:text="Heal" />
+                            android:text="@string/heal" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -129,6 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
+                        android:textStyle="bold"
                         android:text="@string/character_stats"
                         android:textSize="16sp" />
 
@@ -187,8 +190,7 @@
                 app:strokeColor="@android:color/black"
                 app:strokeWidth="1dp" />
 
-            <!-- Spell slots -->
-
+            <!-- Long rest button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_long_rest"
                 android:layout_width="match_parent"
@@ -198,6 +200,7 @@
                 app:strokeColor="@android:color/black"
                 app:strokeWidth="1dp" />
 
+            <!-- Spell slots -->
             <TextView
                 android:id="@+id/tv_spell_slots_label"
                 style="@style/TextAppearance.MaterialComponents.Subtitle1"
@@ -206,17 +209,16 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/spell_slots"
-                android:textSize="16sp" />
+                android:textStyle="bold"
+                android:textSize="20sp" />
 
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/grid_spell_slots_gameplay"
+            <LinearLayout
+                android:id="@+id/container_spell_slot_summary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:alignmentMode="alignMargins"
-                app:columnCount="4"
-                app:useDefaultMargins="true" />
+                android:orientation="vertical" />
 
-            <!-- Long rest button -->
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

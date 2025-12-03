@@ -38,6 +38,8 @@
     <string name="plus">+</string>
     <string name="edit_character">Edit character</string>
     <string name="dice">Dice</string>
+    <string name="damage">Damage</string>
+    <string name="heal">Heal</string>
 
 
     <string-array name="dnd_classes">
