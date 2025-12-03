@@ -177,7 +177,7 @@ class GameplayFragment : Fragment() {
     private fun showSpellSelectionDialog(character: Character, spellLevel: Int) {
         val className = character.charClass?.lowercase() ?: "wizard"
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 // Get all spells for this class
                 val spellList = withContext(Dispatchers.IO) {
@@ -202,8 +202,8 @@ class GameplayFragment : Fragment() {
                     .setTitle("Choose Spell (Level $spellLevel)")
                     .setItems(spellNames) { _, which ->
                         val chosenSpell = spellsOfLevel[which]
-                        showSlotLevelSelectionDialog(character, chosenSpell, spellLevel)
-                    }
+                        showSpellDetailDialog(character, chosenSpell, spellLevel)
+                    }.setNegativeButton("Cancel", null)
                     .show()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -215,6 +215,52 @@ class GameplayFragment : Fragment() {
             }
         }
     }
+
+    private fun showSpellDetailDialog(character: Character, spellSummary: SpellSummary, spellLevel: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val detail = withContext(Dispatchers.IO) {
+                    dndApi.getSpell(spellSummary.index)
+                }
+
+                val desc = detail.desc?.joinToString("\n\n") ?: "No description available."
+                val higher = detail.higher_level?.joinToString("\n") ?: ""
+                val infoBuilder = StringBuilder()
+
+                infoBuilder.append(desc)
+
+                if (higher.isNotBlank()) {
+                    infoBuilder.append("\n\nAt Higher Levels:\n")
+                    infoBuilder.append(higher)
+                }
+
+                infoBuilder.append("\n\nRange: ${detail.range ?: "—"}")
+                infoBuilder.append("\nDuration: ${detail.duration ?: "—"}")
+                infoBuilder.append("\nCasting time: ${detail.casting_time ?: "—"}")
+                infoBuilder.append("\nConcentration: ${if (detail.concentration == true) "Yes" else "No"}")
+                infoBuilder.append("\nRitual: ${if (detail.ritual == true) "Yes" else "No"}")
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle(detail.name)
+                    .setMessage(infoBuilder.toString())
+                    .setPositiveButton("Select Spell Slot") { _, _ ->
+                        // After viewing info, you pick the slot
+                        showSlotLevelSelectionDialog(character, spellSummary, spellLevel)
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to load spell details: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
 
     private fun showSlotLevelSelectionDialog(
         character: Character,
