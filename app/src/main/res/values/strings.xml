@@ -40,6 +40,8 @@
     <string name="dice">Dice</string>
     <string name="damage">Damage</string>
     <string name="heal">Heal</string>
+    <string name="cast_spell">Cast Spell</string>
+    <string name="long_rest">Long Rest</string>
 
 
     <string-array name="dnd_classes">

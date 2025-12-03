@@ -16,6 +16,13 @@ import com.spellweave.data.SpellSlot
 import com.spellweave.databinding.FragmentGameplayBinding
 import com.spellweave.util.JsonHelper
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
+import androidx.appcompat.app.AlertDialog
+import com.spellweave.data.remote.ApiClient
+import com.spellweave.data.remote.SpellSummary
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GameplayFragment : Fragment() {
 
@@ -24,6 +31,7 @@ class GameplayFragment : Fragment() {
 
     private lateinit var viewModel: GameplayModel
 
+    private val dndApi = ApiClient.api
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,6 +55,7 @@ class GameplayFragment : Fragment() {
         setupHpButtons()
         setupLongRestButton()
         setupUpdateCharacterButton()
+        setupCastSpellButton()
 
         return root
     }
@@ -81,7 +90,7 @@ class GameplayFragment : Fragment() {
         val currentHp = c.currentHp ?: c.hp
         binding.tvHpValue.text = "$currentHp / ${c.hp}"
 
-        // NEW: stats
+        // stats
         binding.tvStrengthValue.text = "STR: ${c.strength}"
         binding.tvDexterityValue.text = "DEX: ${c.dexterity}"
         binding.tvConstitutionValue.text = "CON: ${c.constitution}"
@@ -90,6 +99,11 @@ class GameplayFragment : Fragment() {
         binding.tvCharismaValue.text = "CHA: ${c.charisma}"
 
         renderSpellSlots(c.spellSlots)
+
+        //Enable-disable Cast Spell button
+        val hasAvailableSlots = c.spellSlots.any { !it.used }
+        binding.btnCastSpell.isEnabled = hasAvailableSlots
+        binding.btnCastSpell.alpha = if (hasAvailableSlots) 1f else 0.5f
     }
 
     private fun setupHpButtons() {
@@ -125,6 +139,135 @@ class GameplayFragment : Fragment() {
             viewModel.characterData.value?.let { updateUi(it) }
             saveCharacterState()
         }
+    }
+
+    private fun setupCastSpellButton() {
+        binding.btnCastSpell.setOnClickListener {
+            val character = viewModel.characterData.value
+            if (character == null) {
+                Toast.makeText(requireContext(), "No character loaded", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val availableSlots = character.spellSlots.filter { !it.used }
+            if (availableSlots.isEmpty()) {
+                Toast.makeText(
+                    requireContext(),
+                    "No spell slots available",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            // Highest level slot available
+            val maxSlotLevel = availableSlots.maxOf { it.level }
+            val spellLevels = (1..maxSlotLevel).toList()
+            val levelLabels = spellLevels.map { "Level $it" }.toTypedArray()
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("Choose Spell Level")
+                .setItems(levelLabels) { _, which ->
+                    val chosenSpellLevel = spellLevels[which]
+                    showSpellSelectionDialog(character, chosenSpellLevel)
+                }
+                .show()
+        }
+    }
+
+    private fun showSpellSelectionDialog(character: Character, spellLevel: Int) {
+        val className = character.charClass?.lowercase() ?: "wizard"
+
+        lifecycleScope.launch {
+            try {
+                // Get all spells for this class
+                val spellList = withContext(Dispatchers.IO) {
+                    dndApi.getClassSpells(className)
+                }
+
+                val spellsOfLevel: List<SpellSummary> =
+                    spellList.results.filter { it.level == spellLevel }
+
+                if (spellsOfLevel.isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "No level $spellLevel spells available for $className",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@launch
+                }
+
+                val spellNames = spellsOfLevel.map { it.name }.toTypedArray()
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Choose Spell (Level $spellLevel)")
+                    .setItems(spellNames) { _, which ->
+                        val chosenSpell = spellsOfLevel[which]
+                        showSlotLevelSelectionDialog(character, chosenSpell, spellLevel)
+                    }
+                    .show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to load spells: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun showSlotLevelSelectionDialog(
+        character: Character,
+        spell: SpellSummary,
+        spellLevel: Int
+    ) {
+        val availableSlotsByLevel = character.spellSlots
+            .filter { !it.used }
+            .groupBy { it.level }
+
+        // Only slot levels that can legally cast this spell
+        val validSlotLevels = availableSlotsByLevel.keys
+            .filter { it >= spellLevel }
+            .sorted()
+
+        if (validSlotLevels.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                "No spell slots of level $spellLevel or higher available",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val levelLabels = validSlotLevels.map { level ->
+            val count = availableSlotsByLevel[level]?.size ?: 0
+            "Use level $level slot ($count available)"
+        }.toTypedArray()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Select Spell Slot")
+            .setItems(levelLabels) { _, which ->
+                val chosenSlotLevel = validSlotLevels[which]
+
+                // Mark a slot as used with this spell
+                viewModel.consumeSpellSlot(
+                    spellIndex = spell.index,
+                    spellName = spell.name,
+                    slotLevel = chosenSlotLevel,
+                    castAtLevel = chosenSlotLevel // upcast level
+                )
+
+                // Persist + refresh UI
+                saveCharacterState()
+                viewModel.characterData.value?.let { updateUi(it) }
+
+                Toast.makeText(
+                    requireContext(),
+                    "Cast ${spell.name} using a level $chosenSlotLevel slot",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            .show()
     }
 
     @SuppressLint("SetTextI18n")

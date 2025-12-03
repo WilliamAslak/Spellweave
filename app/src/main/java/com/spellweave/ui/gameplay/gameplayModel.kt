@@ -82,4 +82,25 @@ class GameplayModel : ViewModel() {
 
         _characterData.value = c
     }
+
+    fun consumeSpellSlot(
+        spellIndex: String,
+        spellName: String,
+        slotLevel: Int,
+        castAtLevel: Int
+    ) {
+        val c = _characterData.value ?: return
+
+        val slotIndex = c.spellSlots.indexOfFirst { !it.used && it.level == slotLevel }
+        if (slotIndex == -1) return
+
+        val slot = c.spellSlots[slotIndex]
+        slot.used = true
+        slot.usedSpellIndex = spellIndex
+        slot.usedSpellName = spellName
+        slot.castAtLevel = castAtLevel
+
+        // Update visible data
+        _characterData.value = c
+    }
 }
