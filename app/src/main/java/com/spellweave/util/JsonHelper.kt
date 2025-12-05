@@ -1,6 +1,7 @@
 package com.spellweave.util
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.spellweave.data.Character
@@ -38,7 +39,28 @@ object JsonHelper {
 
     fun saveCharacter(context: Context, characterToSave: Character): Boolean {
         if (characterToSave.name.isNullOrBlank()) {
+            Log.w("JsonHelper", "Validation failed: Character name is null or blank.")
             return false // Prevent saving a character with an empty name
+        }
+
+        // Validate character level is between 1 and 20
+        if (characterToSave.level !in 1..20) {
+            Log.w("JsonHelper", "Validation failed: Level must be between 1 and 20. Was ${characterToSave.level}.")
+            return false
+        }
+
+        // Validate all ability scores are between 1 and 30
+        val abilityScores = listOf(
+            characterToSave.strength,
+            characterToSave.dexterity,
+            characterToSave.constitution,
+            characterToSave.intelligence,
+            characterToSave.wisdom,
+            characterToSave.charisma
+        )
+        if (abilityScores.any { it !in 1..30 }) {
+            Log.w("JsonHelper", "Validation failed: All ability scores must be between 1 and 30.")
+            return false
         }
 
         val characters = readCharacters(context)

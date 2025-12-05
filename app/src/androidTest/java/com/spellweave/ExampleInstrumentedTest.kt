@@ -102,7 +102,7 @@ class ExampleInstrumentedTest {
         val character = Character(
             id = "id-empty-name",
             name = "",
-            charClass = "Warrior",
+            charClass = "Wizard",
             level = 1
         )
 
@@ -110,6 +110,53 @@ class ExampleInstrumentedTest {
         assertFalse(result)
 
         // 2. Verify that no characters have been saved
+        val characters = JsonHelper.readCharacters(appContext)
+        assertTrue(characters.isEmpty())
+    }
+
+    // Add this test for level validation
+    @Test
+    fun saveCharacter_preventsInvalidLevel() {
+        // 1. Attempt to save a character with a level outside the 1-20 range
+        val characterLowLevel = Character(
+            id = "id-low-level",
+            name = "Level 0 Guy",
+            charClass = "Wizard",
+            level = 0 // Invalid level
+        )
+        val characterHighLevel = Character(
+            id = "id-high-level",
+            name = "Level 21 Guy",
+            charClass = "Wizard",
+            level = 21 // Invalid level
+        )
+
+        // 2. Assert that the save operation fails
+        assertFalse(JsonHelper.saveCharacter(appContext, characterLowLevel))
+        assertFalse(JsonHelper.saveCharacter(appContext, characterHighLevel))
+
+        // 3. Verify that no characters have been saved
+        val characters = JsonHelper.readCharacters(appContext)
+        assertTrue(characters.isEmpty())
+    }
+
+    // Add this test for ability score validation
+    @Test
+    fun saveCharacter_preventsInvalidAbilityScore() {
+        // 1. Attempt to save a character with an ability score outside the 1-30 range
+        val characterInvalidScore = Character(
+            id = "id-invalid-score",
+            name = "Weakling",
+            charClass = "Wizard",
+            level = 5,
+            strength = 0 // Invalid score
+        )
+
+        // 2. Assert that the save operation fails
+        val result = JsonHelper.saveCharacter(appContext, characterInvalidScore)
+        assertFalse(result)
+
+        // 3. Verify that no characters have been saved
         val characters = JsonHelper.readCharacters(appContext)
         assertTrue(characters.isEmpty())
     }
