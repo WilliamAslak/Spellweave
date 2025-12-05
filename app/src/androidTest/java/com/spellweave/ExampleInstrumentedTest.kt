@@ -3,6 +3,7 @@ package com.spellweave
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.spellweave.data.Character
+import com.spellweave.data.SpellSlot
 import com.spellweave.util.JsonHelper
 import org.junit.After
 
@@ -159,5 +160,29 @@ class ExampleInstrumentedTest {
         // 3. Verify that no characters have been saved
         val characters = JsonHelper.readCharacters(appContext)
         assertTrue(characters.isEmpty())
+    }
+
+    @Test
+    fun useSpellSlot_updatesUsedStatus() {
+        // 1. Create a character with a spell slot
+        val character = Character(
+            id = "test-spell-user",
+            name = "Caster",
+            charClass = "Wizard",
+            level = 1,
+            spellSlots = mutableListOf(SpellSlot(level = 1, used = false))
+        )
+
+        // 2. Save the character
+        JsonHelper.saveCharacter(appContext, character)
+
+        // 3. Read the character and mark the spell slot as used
+        val savedCharacter = JsonHelper.getCharacterById(appContext, "test-spell-user")!!
+        savedCharacter.spellSlots[0].used = true
+        JsonHelper.saveCharacter(appContext, savedCharacter)
+
+        // 4. Read the character again and verify the change
+        val updatedCharacter = JsonHelper.getCharacterById(appContext, "test-spell-user")!!
+        assertTrue(updatedCharacter.spellSlots[0].used)
     }
 }
