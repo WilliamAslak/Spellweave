@@ -102,19 +102,28 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_take_damage"
-                            android:layout_width="120dp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1.2"
+                            android:layout_marginEnd="8dp"
                             android:backgroundTint="#C62828"
-                            android:text="@string/damage" />
+                            android:text="@string/damage"
+                            android:maxLines="1"
+                            android:ellipsize="end"/>
+
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_heal"
-                            android:layout_width="115dp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
+                            android:layout_weight="0.9"
+                            android:layout_marginStart="8dp"
                             android:backgroundTint="#2E7D32"
-                            android:text="@string/heal" />
+                            android:text="@string/heal"
+                            android:maxLines="1"
+                            android:ellipsize="end"/>
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <!-- Right Column -->
