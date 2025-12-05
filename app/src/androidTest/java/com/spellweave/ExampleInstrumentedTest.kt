@@ -55,7 +55,8 @@ class ExampleInstrumentedTest {
         )
 
         // 2. Save the character
-        JsonHelper.saveCharacter(appContext, newCharacter)
+        val result = JsonHelper.saveCharacter(appContext, newCharacter)
+        assertTrue(result)
 
         // 3. Read the characters back from the file
         val characters = JsonHelper.readCharacters(appContext)
@@ -66,5 +67,50 @@ class ExampleInstrumentedTest {
         assertEquals("Test Character", savedCharacter?.name)
         assertEquals("Wizard", savedCharacter?.charClass)
         assertEquals(5, savedCharacter?.level)
+    }
+
+    @Test
+    fun saveCharacter_preventsDuplicateNames() {
+        // 1. Create and save a character
+        val character1 = Character(
+            id = "id-1",
+            name = "Duplicate Name",
+            charClass = "Rogue",
+            level = 3
+        )
+        JsonHelper.saveCharacter(appContext, character1)
+
+        // 2. Attempt to save a new character with the same name
+        val character2 = Character(
+            id = "id-2",
+            name = "Duplicate Name",
+            charClass = "Bard",
+            level = 4
+        )
+        val result = JsonHelper.saveCharacter(appContext, character2)
+        assertFalse(result)
+
+        // 3. Verify that only the first character is saved
+        val characters = JsonHelper.readCharacters(appContext)
+        assertEquals(1, characters.size)
+        assertEquals("id-1", characters[0].id)
+    }
+
+    @Test
+    fun saveCharacter_preventsEmptyName() {
+        // 1. Attempt to save a character with an empty name
+        val character = Character(
+            id = "id-empty-name",
+            name = "",
+            charClass = "Warrior",
+            level = 1
+        )
+
+        val result = JsonHelper.saveCharacter(appContext, character)
+        assertFalse(result)
+
+        // 2. Verify that no characters have been saved
+        val characters = JsonHelper.readCharacters(appContext)
+        assertTrue(characters.isEmpty())
     }
 }

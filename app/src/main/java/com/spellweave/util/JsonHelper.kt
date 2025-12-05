@@ -36,8 +36,18 @@ object JsonHelper {
         file.writeText(json)
     }
 
-    fun saveCharacter(context: Context, characterToSave: Character) {
+    fun saveCharacter(context: Context, characterToSave: Character): Boolean {
+        if (characterToSave.name.isNullOrBlank()) {
+            return false // Prevent saving a character with an empty name
+        }
+
         val characters = readCharacters(context)
+
+        // Check if a character with the same name already exists
+        val existingCharacterByName = characters.find { it.name.equals(characterToSave.name, ignoreCase = true) }
+        if (existingCharacterByName != null && existingCharacterByName.id != characterToSave.id) {
+            return false // A character with this name already exists
+        }
 
         //Find the index of the character with the same id
         val existingIndex = characters.indexOfFirst { it.id == characterToSave.id }
@@ -51,6 +61,7 @@ object JsonHelper {
         }
 
         writeCharacters(context, characters)
+        return true
     }
 
     fun deleteCharacter(context: Context, characterId: String): Boolean {
