@@ -1,6 +1,7 @@
 package com.spellweave.util
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.spellweave.data.Character
@@ -36,8 +37,39 @@ object JsonHelper {
         file.writeText(json)
     }
 
-    fun saveCharacter(context: Context, characterToSave: Character) {
+    fun saveCharacter(context: Context, characterToSave: Character): Boolean {
+        if (characterToSave.name.isNullOrBlank()) {
+            Log.w("JsonHelper", "Validation failed: Character name is null or blank.")
+            return false // Prevent saving a character with an empty name
+        }
+
+        // Validate character level is between 1 and 20
+        if (characterToSave.level !in 1..20) {
+            Log.w("JsonHelper", "Validation failed: Level must be between 1 and 20. Was ${characterToSave.level}.")
+            return false
+        }
+
+        // Validate all ability scores are between 1 and 30
+        val abilityScores = listOf(
+            characterToSave.strength,
+            characterToSave.dexterity,
+            characterToSave.constitution,
+            characterToSave.intelligence,
+            characterToSave.wisdom,
+            characterToSave.charisma
+        )
+        if (abilityScores.any { it !in 1..30 }) {
+            Log.w("JsonHelper", "Validation failed: All ability scores must be between 1 and 30.")
+            return false
+        }
+
         val characters = readCharacters(context)
+
+        // Check if a character with the same name already exists
+        val existingCharacterByName = characters.find { it.name.equals(characterToSave.name, ignoreCase = true) }
+        if (existingCharacterByName != null && existingCharacterByName.id != characterToSave.id) {
+            return false // A character with this name already exists
+        }
 
         //Find the index of the character with the same id
         val existingIndex = characters.indexOfFirst { it.id == characterToSave.id }
@@ -51,6 +83,7 @@ object JsonHelper {
         }
 
         writeCharacters(context, characters)
+        return true
     }
 
     fun deleteCharacter(context: Context, characterId: String): Boolean {

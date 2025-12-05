@@ -301,44 +301,44 @@ class CharactercreatorFragment : Fragment() {
         //switch case that with default class values. Modify this so it fits characters better
         when (className) {
             "Bard" -> {
-                character.strength = 8;  character.dexterity = 10; character.constitution = 10
-                character.intelligence = 15; character.wisdom = 14; character.charisma = 12
+                character.strength = 10;  character.dexterity = 14; character.constitution = 13
+                character.intelligence = 8; character.wisdom = 12; character.charisma = 15
             }
             "Cleric" -> {
-                character.strength = 10; character.dexterity = 15; character.constitution = 10
-                character.intelligence = 12; character.wisdom = 8;  character.charisma = 14
+                character.strength = 13; character.dexterity = 12; character.constitution = 14
+                character.intelligence = 8; character.wisdom = 15;  character.charisma = 10
             }
             "Druid" -> {
-                character.strength = 15; character.dexterity = 14; character.constitution = 12
-                character.intelligence = 8;  character.wisdom = 10; character.charisma = 10
+                character.strength = 8; character.dexterity = 12; character.constitution = 14
+                character.intelligence = 10;  character.wisdom = 15; character.charisma = 13
             }
             "Fighter" -> {
-                character.strength = 12; character.dexterity = 12; character.constitution = 12
-                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+                character.strength = 15; character.dexterity = 10; character.constitution = 14
+                character.intelligence = 8; character.wisdom = 13; character.charisma = 12
             }
             "Paladin" -> {
-                character.strength = 12; character.dexterity = 12; character.constitution = 12
-                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+                character.strength = 15; character.dexterity = 10; character.constitution = 13
+                character.intelligence = 8; character.wisdom = 12; character.charisma = 14
             }
             "Ranger" -> {
-                character.strength = 12; character.dexterity = 12; character.constitution = 12
-                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+                character.strength = 12; character.dexterity = 15; character.constitution = 13
+                character.intelligence = 10; character.wisdom = 14; character.charisma = 8
             }
             "Rogue" -> {
-                character.strength = 12; character.dexterity = 12; character.constitution = 12
-                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+                character.strength = 8; character.dexterity = 15; character.constitution = 14
+                character.intelligence = 10; character.wisdom = 13; character.charisma = 12
             }
             "Sorcerer" -> {
-                character.strength = 12; character.dexterity = 12; character.constitution = 12
-                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+                character.strength = 10; character.dexterity = 13; character.constitution = 14
+                character.intelligence = 8; character.wisdom = 12; character.charisma = 15
             }
             "Warlock" -> {
-                character.strength = 12; character.dexterity = 12; character.constitution = 12
-                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+                character.strength = 8; character.dexterity = 13; character.constitution = 14
+                character.intelligence = 10; character.wisdom = 12; character.charisma = 15
             }
             "Wizard" -> {
-                character.strength = 12; character.dexterity = 12; character.constitution = 12
-                character.intelligence = 10; character.wisdom = 10; character.charisma = 8
+                character.strength = 8; character.dexterity = 13; character.constitution = 14
+                character.intelligence = 15; character.wisdom = 12; character.charisma = 10
             }
             //If nothing, keep values as is.
             else -> {}
@@ -367,28 +367,39 @@ class CharactercreatorFragment : Fragment() {
         val enteredName = characterToSave.name?.trim().orEmpty()
         val enteredClass = characterToSave.charClass?.trim().orEmpty()
 
-        characterToSave.spellSlots = characterToSave.spellSlots
-            //Sorts from highest level spellslot to lowest.
-            .sortedByDescending { it.level }
-            .toMutableList()
-
         if (enteredName.isBlank()) {
             Toast.makeText(requireContext(), "Please enter a name", Toast.LENGTH_SHORT).show()
             return
         }
 
-        //Block duplicate characters (same name and class)
-        if (!isUpdateMode) {
-            val existing = JsonHelper.readCharacters(requireContext()).any { c ->
-                (c.name?.trim()?.lowercase() == enteredName.lowercase()) && (c.charClass?.trim() == enteredClass)
-            }
-            if (existing) {
-                Toast.makeText(requireContext(), "character already exists", Toast.LENGTH_SHORT).show()
-                return
-            }
+        if (characterToSave.level !in 1..20) {
+            Toast.makeText(requireContext(), "Level must be between 1 and 20", Toast.LENGTH_SHORT).show()
+            return
         }
 
-        JsonHelper.saveCharacter(requireContext(), characterToSave)
+        val abilities = listOf(
+            characterToSave.strength, characterToSave.dexterity, characterToSave.constitution,
+            characterToSave.intelligence, characterToSave.wisdom, characterToSave.charisma
+        )
+
+        if (abilities.any { it !in 1..30 }) {
+            Toast.makeText(requireContext(), "Ability scores must be between 1 and 30", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        characterToSave.spellSlots = characterToSave.spellSlots
+            //Sorts from highest level spellslot to lowest.
+            .sortedByDescending { it.level }
+            .toMutableList()
+
+        if (!isUpdateMode) {
+            if (!JsonHelper.saveCharacter(requireContext(), characterToSave)) {
+                Toast.makeText(requireContext(), "A character with this name already exists", Toast.LENGTH_SHORT).show()
+                return
+            }
+        } else {
+            JsonHelper.saveCharacter(requireContext(), characterToSave)
+        }
 
         //Little popup saying we either updated/saved a character
         val message = if (isUpdateMode) "Character updated!" else "Character saved!"
